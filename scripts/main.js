@@ -42,3 +42,64 @@ function insertName(){
 }
 insertName();
 
+function writeHikes() {
+    //define a variable for the collection you want to create in Firestore to populate data
+    var hikesRef = db.collection("hikes");
+
+    hikesRef.add({
+        code: "BBY01",
+        name: "Burnaby Lake Park Trail", //replace with your own city?
+        city: "Burnaby",
+        province: "BC",
+        level: "easy",
+        length: "10",
+        details: "Haurence once every 10 years",
+        last_updated: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    hikesRef.add({
+        code: "AM01",
+        name: "Buntzen Lake Trail Trail", //replace with your own city?
+        city: "Anmore",
+        province: "BC",
+        level: "moderate",
+        length: "10.5",
+        details: "Jack goes here every week",
+        last_updated: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    hikesRef.add({
+        code: "NV01",
+        name: "Mount Seymoure Trail", //replace with your own city?
+        city: "North Vancouver",
+        province: "BC",
+        level: "hard",
+        length: "8.2",
+        details: "Barry finishes the hike every morning",
+        last_updated: firebase.firestore.Timestamp.fromDate(new Date("March 10, 2022"))
+    });
+}
+
+function populateCardsDynamically() {
+    let hikeCardTemplate = document.getElementById("hikeCardTemplate");
+    let hikeCardGroup = document.getElementById("hikeCardGroup");
+    
+    db.collection("hikes").get()
+        .then(allHikes => {
+            allHikes.forEach(doc => {
+                var hikeName = doc.data().name; //gets the name field
+                var hikeID = doc.data().code; //gets the unique ID field
+                var hikeLength = doc.data().length; //gets the length field
+                let testHikeCard = hikeCardTemplate.content.cloneNode(true);
+                testHikeCard.querySelector('.card-title').innerHTML = hikeName;     //equiv getElementByClassName
+                testHikeCard.querySelector('.card-length').innerHTML = hikeLength;  //equiv getElementByClassName
+                testHikeCard.querySelector('a').onclick = () => setHikeData(hikeID);//equiv getElementByTagName
+                testHikeCard.querySelector('img').src = `./images/${hikeID}.jpg`;   //equiv getElementByTagName
+                hikeCardGroup.appendChild(testHikeCard);
+            })
+
+        })
+}
+populateCardsDynamically();
+
+function setHikeData(id){
+    localStorage.setItem ('hikeID', id);
+}
