@@ -10,6 +10,19 @@ function read_display_Quote(){
 }
 read_display_Quote();
 
+function readQuote() {
+    db.collection("quotes").doc("Tuesday")
+        .onSnapshot(tuesdayDoc => {
+            console.log("current document data: " + tuesdayDoc.data());
+            document.getElementById("quote-goes-here").innerHTML = tuesdayDoc.data().quote;
+
+            //Here are other ways to access key:value data fields
+            //$('#quote-goes-here').text(tuesdayDoc.data().quote);                                       //using jquery object dot notation
+            //$("#quote-goes-here").text(tuesdayDoc.data()["quote"]);                                    //using json object indexing
+        })
+}
+readQuote()
+
 function insertName(){
 // to check if the user is logged in:
  firebase.auth().onAuthStateChanged(user =>{
